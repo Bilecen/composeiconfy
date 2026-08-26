@@ -1,0 +1,19 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android / IDE
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+
+# Kotlin
+.kotlin/
+
+# NOTE: .iconfy/cache/ is intentionally NOT ignored — commit it for reproducible,
+# network-free (--offline) builds on CI. Remove the line below only if you prefer
+# to re-download icons on every fresh checkout.
+# .iconfy/
