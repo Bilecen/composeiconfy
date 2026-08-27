@@ -6,7 +6,7 @@ plugins {
     id("com.gradle.plugin-publish") version "1.3.0"
 }
 
-group = "dev.iconfy"
+group = "io.github.bilecen"
 version = "0.1.0"
 
 repositories {
@@ -38,7 +38,7 @@ gradlePlugin {
     vcsUrl.set("https://github.com/tahabilecen/composeiconfy")
     plugins {
         create("iconfy") {
-            id = "dev.iconfy"
+            id = "io.github.bilecen.iconfy"
             implementationClass = "dev.iconfy.IconfyPlugin"
             displayName = "Iconfy — Iconify icons for Compose"
             description = "Build-time Iconify → Jetpack Compose ImageVector code generation"

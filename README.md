@@ -28,7 +28,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("dev.iconfy") version "0.1.0"
+    id("io.github.bilecen.iconfy") version "0.1.0"
 }
 
 iconfy {
@@ -40,6 +40,20 @@ iconfy {
             add("heart")
             add("star")
         }
+    }
+}
+```
+
+The plugin depends on `com.android.tools:sdk-common` (build-time only), so make sure **`google()`**
+is in your plugin-resolution repositories:
+
+```kotlin
+// settings.gradle.kts
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
     }
 }
 ```

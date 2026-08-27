@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("dev.iconfy")
+    id("io.github.bilecen.iconfy")
 }
 
 android {
