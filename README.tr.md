@@ -30,7 +30,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.1.0"
+    id("io.github.bilecen.iconfy") version "0.1.1"
 }
 
 iconfy {
