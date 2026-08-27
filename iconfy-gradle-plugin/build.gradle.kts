@@ -34,8 +34,8 @@ dependencies {
 
 gradlePlugin {
     // Set these to your real repo before publishing to the Gradle Plugin Portal.
-    website.set("https://github.com/tahabilecen/composeiconfy")
-    vcsUrl.set("https://github.com/tahabilecen/composeiconfy")
+    website.set("https://github.com/Bilecen/composeiconfy")
+    vcsUrl.set("https://github.com/Bilecen/composeiconfy")
     plugins {
         create("iconfy") {
             id = "io.github.bilecen.iconfy"
@@ -53,7 +53,7 @@ publishing {
         pom {
             name.set("Iconfy")
             description.set("Build-time Iconify → Jetpack Compose ImageVector code generation.")
-            url.set("https://github.com/tahabilecen/composeiconfy")
+            url.set("https://github.com/Bilecen/composeiconfy")
             licenses {
                 license {
                     name.set("MIT License")
@@ -62,12 +62,12 @@ publishing {
             }
             developers {
                 developer {
-                    id.set("tahabilecen")
+                    id.set("bilecen")
                     name.set("Taha Bilecen")
                 }
             }
             scm {
-                url.set("https://github.com/tahabilecen/composeiconfy")
+                url.set("https://github.com/Bilecen/composeiconfy")
             }
         }
     }
