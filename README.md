@@ -1,5 +1,7 @@
 # Iconfy
 
+**🇬🇧 English** · [🇹🇷 Türkçe](README.tr.md)
+
 Use any of [Iconify](https://iconify.design)'s 200,000+ icons (Material Design Icons, Tabler,
 Lucide, Phosphor, Font Awesome, Carbon, …) in **Android Jetpack Compose** — declared in your Gradle
 build, embedded at build time, fully **offline** afterward.
