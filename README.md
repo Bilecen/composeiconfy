@@ -34,7 +34,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.2"
+    id("io.github.bilecen.iconfy") version "0.2.3"
 }
 
 iconfy {
@@ -100,6 +100,15 @@ iconfy {
 
 The same icon can appear both top-level and in any number of categories (it is downloaded once). IDE
 autocomplete surfaces the whole tree as soon as you type `Iconfy.Dashboard.`.
+
+Rename the middle prefix segment with `prefix("mdi", named = "Nav")` when `Mdi` reads awkwardly inside
+a semantic category:
+
+```kotlin
+category("Dashboard") {
+    prefix("mdi", named = "Nav") { add("home") }   // → Iconfy.Dashboard.Nav.Home
+}
+```
 
 ### Custom accessor names
 
