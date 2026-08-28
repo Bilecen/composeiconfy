@@ -52,6 +52,10 @@ iconfy {
         add("mdi:github")
         add("material-symbols:settings")
         add("ph:gear-six-fill")
+        // Flat cross-set group via `into` — no repeated prefix() blocks → Iconfy.Cards.*
+        add("hugeicons:gpu", named = "Gpu", into = "Cards")
+        add("clarity:hard-disk-line", named = "Disk", into = "Cards")
+        add("iconoir:multi-mac-os-window", named = "OsType", into = "Cards")
     }
     // Semantic cluster mixing sets → Iconfy.Dashboard.Mdi.Home, Iconfy.Dashboard.Tabler.Settings
     category("Dashboard") {

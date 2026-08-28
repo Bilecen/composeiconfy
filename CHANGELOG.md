@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.4] - 2026-08-28
+
+### Added
+- **`add(..., into = "Group")`** flattens icons from different sets under one middle group without
+  repeating `prefix(...)` blocks: `add("bi:terminal-fill", named = "Logs", into = "Sidebar")` →
+  `Iconfy.Sidebar.Logs`. The set comes from the coordinate; `into` sets the middle segment.
+
 ## [0.2.3] - 2026-08-28
 
 ### Added
