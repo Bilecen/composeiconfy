@@ -3,7 +3,14 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-08-28
+
+### Fixed
+- **AGP 9 / built-in Kotlin compatibility.** Generated accessors failed to compile on AGP 9+
+  (`Unresolved reference 'let'/'apply'/'addPath'`) because the `.kt` was registered under the
+  variant's Java sources. The plugin now registers with `variant.sources.kotlin` when AGP owns the
+  Kotlin compilation (no `kotlin-android` plugin), and falls back to Java sources on AGP 8.x +
+  `kotlin-android`.
 
 ### Added
 - Automated test suite: unit tests (`Names`, `SvgToImageVector`, `IconfyCodegen`) and Gradle TestKit
