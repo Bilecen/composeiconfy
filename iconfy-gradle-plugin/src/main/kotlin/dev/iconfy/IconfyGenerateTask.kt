@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
@@ -22,6 +23,10 @@ abstract class IconfyGenerateTask : DefaultTask() {
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val cacheDir: DirectoryProperty
+
+    /** Encoded placements: they map cached icons to their (category, prefix) positions. */
+    @get:Input
+    abstract val placements: SetProperty<String>
 
     @get:Input
     abstract val packageName: Property<String>
@@ -51,14 +56,21 @@ abstract class IconfyGenerateTask : DefaultTask() {
             return
         }
 
-        val entries = ArrayList<IconEntry>(svgs.size)
+        // Convert each unique cached SVG once, keyed by "prefix/name".
+        val images = HashMap<String, VectorImage>(svgs.size)
         val failed = mutableListOf<String>()
         for (svg in svgs) {
             val prefix = svg.parentFile.name
             val name = svg.nameWithoutExtension
             SvgToImageVector.convert(svg)
-                .onSuccess { entries += IconEntry(prefix, name, it) }
+                .onSuccess { images["$prefix/$name"] = it }
                 .onFailure { failed += "$prefix:$name (${it.message})" }
+        }
+
+        // Expand placements into accessors: the same icon may appear top-level and in categories.
+        val entries = placements.get().sorted().mapNotNull { spec ->
+            val (category, prefix, name) = IconfyExtension.decode(spec)
+            images["$prefix/$name"]?.let { IconEntry(category, prefix, name, it) }
         }
 
         if (entries.isEmpty()) {

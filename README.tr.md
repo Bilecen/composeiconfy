@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.1.1"
+    id("io.github.bilecen.iconfy") version "0.2.1"
 }
 
 iconfy {
@@ -82,6 +82,24 @@ Icon(Iconfy.Lucide.Heart, contentDescription = null)
 İsimler PascalCase'e çevrilir: `arrow-left` → `ArrowLeft`, `mdi:github` → `Iconfy.Mdi.Github`,
 `material-symbols:settings` → `Iconfy.MaterialSymbols.Settings`. Prefix'e göre iç içe olması sayesinde
 farklı setlerdeki aynı isimli ikonlar asla çakışmaz.
+
+### Kategoriler
+
+Bildirimleri `category("Ad")` içine alarak farklı setleri karıştıran dış bir semantik küme
+oluşturabilirsin. Prefix grubu içeride korunur, yani `Iconfy.<Kategori>.<Prefix>.<İkon>` olur:
+
+```kotlin
+iconfy {
+    icons { add("mdi:home") }              // → Iconfy.Mdi.Home
+    category("Dashboard") {
+        prefix("mdi") { add("home") }      // → Iconfy.Dashboard.Mdi.Home
+        add("tabler:settings")             // → Iconfy.Dashboard.Tabler.Settings
+    }
+}
+```
+
+Aynı ikon hem üst seviyede hem de istediğin kadar kategoride görünebilir (yalnızca bir kez indirilir).
+`Iconfy.Dashboard.` yazdığın anda IDE otomatik tamamlaması tüm ağacı gösterir.
 
 ### Renklendirme (tint)
 

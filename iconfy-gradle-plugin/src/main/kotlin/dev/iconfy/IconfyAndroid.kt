@@ -29,6 +29,7 @@ internal fun wireAndroid(
             description = "Generates Iconfy ImageVector accessors for the ${variant.name} variant."
             dependsOn(fetch)
             cacheDir.set(cacheLocation)
+            placements.set(ext.placements)
             packageName.set(ext.packageName)
             accessorName.set(ext.accessorName)
             rootDir.set(project.rootProject.layout.projectDirectory)

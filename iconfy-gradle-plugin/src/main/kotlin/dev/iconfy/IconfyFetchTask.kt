@@ -22,8 +22,9 @@ import java.net.http.HttpResponse
  */
 abstract class IconfyFetchTask : DefaultTask() {
 
+    /** Encoded placements; only the (prefix, name) part matters for fetching. */
     @get:Input
-    abstract val iconSpecs: SetProperty<String>
+    abstract val placements: SetProperty<String>
 
     @get:Input
     abstract val apiUrl: Property<String>
@@ -40,8 +41,8 @@ abstract class IconfyFetchTask : DefaultTask() {
 
     @TaskAction
     fun run() {
-        val specs = iconSpecs.get().sorted()
-        if (specs.isEmpty()) {
+        val placementList = placements.get()
+        if (placementList.isEmpty()) {
             logger.lifecycle("iconfy: no icons declared in the iconfy { } block.")
             return
         }
@@ -51,10 +52,13 @@ abstract class IconfyFetchTask : DefaultTask() {
         val isOffline = offline.get()
         val missing = mutableListOf<String>()
 
-        val byPrefix = specs.groupBy(
-            keySelector = { it.substringBefore(':') },
-            valueTransform = { it.substringAfter(':') },
-        )
+        // Fetching is category-agnostic: reduce placements to unique (prefix, name), grouped by set.
+        val byPrefix = placementList
+            .map { IconfyExtension.decode(it) }
+            .map { it.second to it.third }
+            .distinct()
+            .sortedWith(compareBy({ it.first }, { it.second }))
+            .groupBy(keySelector = { it.first }, valueTransform = { it.second })
 
         for ((prefix, names) in byPrefix.toSortedMap()) {
             val needed = names.filterNot { cacheFile(outRoot, prefix, it).isFile }.distinct().sorted()

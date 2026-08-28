@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-08-28
+
+### Added
+- **`category("Name") { … }` DSL** for semantic clusters that mix icon sets, generating an outer
+  object: `Iconfy.Dashboard.Mdi.Home`, `Iconfy.Dashboard.Tabler.Settings`. Prefix grouping is kept
+  inside the category, and the same icon can appear both top-level and in one or more categories.
+
 ## [0.2.0] - 2026-08-28
 
 ### Fixed
