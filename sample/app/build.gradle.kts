@@ -53,4 +53,9 @@ iconfy {
         add("material-symbols:settings")
         add("ph:gear-six-fill")
     }
+    // Semantic cluster mixing sets → Iconfy.Dashboard.Mdi.Home, Iconfy.Dashboard.Tabler.Settings
+    category("Dashboard") {
+        prefix("mdi") { add("home") }
+        add("tabler:settings")
+    }
 }

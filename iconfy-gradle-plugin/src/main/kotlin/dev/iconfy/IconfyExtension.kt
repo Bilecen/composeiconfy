@@ -9,10 +9,9 @@ import javax.inject.Inject
 /**
  * `iconfy { }` DSL extension.
  *
- * Declare Iconify icons as `"prefix:name"` coordinates (e.g. `"mdi:home"`). At build time the
- * plugin downloads each icon from the Iconify API, caches it, and generates type-safe
- * [androidx.compose.ui.graphics.vector.ImageVector] accessors grouped by prefix
- * (e.g. `Iconfy.Mdi.Home`).
+ * Declare Iconify icons as `"prefix:name"` coordinates. By default they are grouped by set prefix
+ * (`Iconfy.Mdi.Home`). Wrap declarations in [category] to add an outer semantic group that mixes
+ * sets, e.g. `Iconfy.Dashboard.Mdi.Home` and `Iconfy.Dashboard.Tabler.Settings`.
  */
 abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
 
@@ -32,19 +31,25 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     val failOnMissing: Property<Boolean> =
         objects.property(Boolean::class.java).convention(true)
 
-    /** Resolved set of `"prefix:name"` coordinates. Populated via [icons]. */
-    val iconSpecs: SetProperty<String> = objects.setProperty(String::class.java)
+    /** Encoded placements `"category<SEP>prefix<SEP>name"` (empty category = top level). */
+    val placements: SetProperty<String> = objects.setProperty(String::class.java)
 
-    /** Declare icons: `icons { add("mdi:home"); prefix("lucide") { add("heart") } }`. */
-    fun icons(action: Action<IconsScope>) {
-        action.execute(IconsScope(iconSpecs))
+    /** Declare icons grouped by their Iconify set prefix: `Iconfy.Mdi.Home`. */
+    fun icons(action: Action<IconScope>) {
+        action.execute(IconScope("", placements))
     }
 
-    /** Scope for [icons]. */
-    class IconsScope(private val specs: SetProperty<String>) {
+    /** Declare icons under a named category: `category("Dashboard") { … }` → `Iconfy.Dashboard.Mdi.Home`. */
+    fun category(name: String, action: Action<IconScope>) {
+        action.execute(IconScope(name.trim(), placements))
+    }
+
+    /** Scope for [icons] / [category]; the same API, optionally tagged with a category. */
+    class IconScope(private val category: String, private val placements: SetProperty<String>) {
         /** Add a full `"prefix:name"` coordinate. */
         fun add(coordinate: String) {
-            specs.add(normalize(coordinate))
+            val c = normalize(coordinate)
+            placements.add(encode(category, c.substringBefore(':'), c.substringAfter(':')))
         }
 
         /** Add several full coordinates at once. */
@@ -52,17 +57,21 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
             coordinates.forEach { add(it) }
         }
 
-        /** Sugar: `prefix("lucide") { add("heart"); add("star") }`. */
+        /** Sugar for one set: `prefix("mdi") { add("home") }`. */
         fun prefix(prefix: String, action: Action<PrefixScope>) {
-            action.execute(PrefixScope(prefix.trim(), specs))
+            action.execute(PrefixScope(category, prefix.trim(), placements))
         }
     }
 
-    /** Scope bound to a single icon-set prefix. */
-    class PrefixScope(private val prefix: String, private val specs: SetProperty<String>) {
+    /** Scope bound to a single icon-set prefix within [IconScope]. */
+    class PrefixScope(
+        private val category: String,
+        private val prefix: String,
+        private val placements: SetProperty<String>,
+    ) {
         /** Add an icon name within the enclosing prefix. */
         fun add(name: String) {
-            specs.add(normalize("$prefix:${name.trim()}"))
+            placements.add(encode(category, prefix, name.trim()))
         }
 
         /** Add several icon names within the enclosing prefix. */
@@ -72,6 +81,18 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     }
 
     companion object {
+        private const val SEP = ""
+
+        /** Encode a placement into a single Gradle-input-friendly string. */
+        fun encode(category: String, prefix: String, name: String): String =
+            "$category$SEP$prefix$SEP$name"
+
+        /** Decode a placement into (category, prefix, name). */
+        fun decode(spec: String): Triple<String, String, String> {
+            val parts = spec.split(SEP)
+            return Triple(parts[0], parts.getOrElse(1) { "" }, parts.getOrElse(2) { "" })
+        }
+
         /** Validate and canonicalize a `"prefix:name"` coordinate. */
         fun normalize(coordinate: String): String {
             val c = coordinate.trim()

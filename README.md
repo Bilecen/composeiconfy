@@ -1,5 +1,9 @@
 # Iconfy
 
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.bilecen.iconfy)](https://plugins.gradle.org/plugin/io.github.bilecen.iconfy)
+[![CI](https://github.com/Bilecen/composeiconfy/actions/workflows/ci.yml/badge.svg)](https://github.com/Bilecen/composeiconfy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **🇬🇧 English** · [🇹🇷 Türkçe](README.tr.md)
 
 Use any of [Iconify](https://iconify.design)'s 200,000+ icons (Material Design Icons, Tabler,
@@ -30,7 +34,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.1.1"
+    id("io.github.bilecen.iconfy") version "0.2.1"
 }
 
 iconfy {
@@ -78,6 +82,24 @@ Icon(Iconfy.Lucide.Heart, contentDescription = null)
 Names are converted to PascalCase: `arrow-left` → `ArrowLeft`, `mdi:github` → `Iconfy.Mdi.Github`,
 `material-symbols:settings` → `Iconfy.MaterialSymbols.Settings`. Nesting by prefix means the same
 icon name in different sets never collides.
+
+### Categories
+
+Wrap declarations in `category("Name")` to add an outer semantic cluster that mixes icon sets. The
+prefix grouping is kept inside, so you get `Iconfy.<Category>.<Prefix>.<Icon>`:
+
+```kotlin
+iconfy {
+    icons { add("mdi:home") }              // → Iconfy.Mdi.Home
+    category("Dashboard") {
+        prefix("mdi") { add("home") }      // → Iconfy.Dashboard.Mdi.Home
+        add("tabler:settings")             // → Iconfy.Dashboard.Tabler.Settings
+    }
+}
+```
+
+The same icon can appear both top-level and in any number of categories (it is downloaded once). IDE
+autocomplete surfaces the whole tree as soon as you type `Iconfy.Dashboard.`.
 
 ### Tinting
 

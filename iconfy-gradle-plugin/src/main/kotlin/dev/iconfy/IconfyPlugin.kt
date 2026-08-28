@@ -21,7 +21,7 @@ class IconfyPlugin : Plugin<Project> {
         val fetch = project.tasks.register<IconfyFetchTask>("iconfyFetch") {
             group = GROUP
             description = "Downloads declared Iconify icons and caches them as SVG."
-            iconSpecs.set(ext.iconSpecs)
+            placements.set(ext.placements)
             apiUrl.set(ext.apiUrl)
             failOnMissing.set(ext.failOnMissing)
             offline.set(project.gradle.startParameter.isOffline)

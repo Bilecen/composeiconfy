@@ -4,8 +4,10 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -22,6 +24,10 @@ abstract class IconfyGenerateTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val cacheDir: DirectoryProperty
 
+    /** Encoded placements: they map cached icons to their (category, prefix) positions. */
+    @get:Input
+    abstract val placements: SetProperty<String>
+
     @get:Input
     abstract val packageName: Property<String>
 
@@ -30,6 +36,10 @@ abstract class IconfyGenerateTask : DefaultTask() {
 
     @get:OutputDirectory
     abstract val generatedSrcDir: DirectoryProperty
+
+    /** Root dir for pretty log paths; not an input (Internal) so it doesn't affect up-to-date checks. */
+    @get:Internal
+    abstract val rootDir: DirectoryProperty
 
     @TaskAction
     fun run() {
@@ -46,14 +56,21 @@ abstract class IconfyGenerateTask : DefaultTask() {
             return
         }
 
-        val entries = ArrayList<IconEntry>(svgs.size)
+        // Convert each unique cached SVG once, keyed by "prefix/name".
+        val images = HashMap<String, VectorImage>(svgs.size)
         val failed = mutableListOf<String>()
         for (svg in svgs) {
             val prefix = svg.parentFile.name
             val name = svg.nameWithoutExtension
             SvgToImageVector.convert(svg)
-                .onSuccess { entries += IconEntry(prefix, name, it) }
+                .onSuccess { images["$prefix/$name"] = it }
                 .onFailure { failed += "$prefix:$name (${it.message})" }
+        }
+
+        // Expand placements into accessors: the same icon may appear top-level and in categories.
+        val entries = placements.get().sorted().mapNotNull { spec ->
+            val (category, prefix, name) = IconfyExtension.decode(spec)
+            images["$prefix/$name"]?.let { IconEntry(category, prefix, name, it) }
         }
 
         if (entries.isEmpty()) {
@@ -65,6 +82,7 @@ abstract class IconfyGenerateTask : DefaultTask() {
         if (failed.isNotEmpty()) {
             logger.warn("iconfy: ${failed.size} icon(s) skipped (unrepresentable): ${failed.joinToString()}")
         }
-        logger.lifecycle("iconfy: generated ${entries.size} ${accessorName.get()} accessor(s) into ${out.relativeTo(project.rootDir)}")
+        val where = rootDir.orNull?.asFile?.let { runCatching { out.relativeTo(it) }.getOrDefault(out) } ?: out
+        logger.lifecycle("iconfy: generated ${entries.size} ${accessorName.get()} accessor(s) into $where")
     }
 }

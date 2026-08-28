@@ -46,6 +46,9 @@ private fun IconGallery() {
         IconRow("mdi:github", Iconfy.Mdi.Github)
         IconRow("material-symbols:settings", Iconfy.MaterialSymbols.Settings)
         IconRow("ph:gear-six-fill", Iconfy.Ph.GearSixFill)
+        Text("category(\"Dashboard\")", style = MaterialTheme.typography.titleSmall)
+        IconRow("Dashboard.Mdi.Home", Iconfy.Dashboard.Mdi.Home)
+        IconRow("Dashboard.Tabler.Settings", Iconfy.Dashboard.Tabler.Settings)
     }
 }
 
