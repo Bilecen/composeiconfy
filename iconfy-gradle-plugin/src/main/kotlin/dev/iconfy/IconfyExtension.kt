@@ -46,15 +46,14 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
 
     /** Scope for [icons] / [category]; the same API, optionally tagged with a category. */
     class IconScope(private val category: String, private val placements: SetProperty<String>) {
-        /** Add a full `"prefix:name"` coordinate. */
-        fun add(coordinate: String) {
+        /**
+         * Add a full `"prefix:name"` coordinate. Pass [named] to override the generated accessor
+         * name, e.g. `add("lucide:chart-bar", named = "Chart")` → `…Lucide.Chart`.
+         */
+        @JvmOverloads
+        fun add(coordinate: String, named: String = "") {
             val c = normalize(coordinate)
-            placements.add(encode(category, c.substringBefore(':'), c.substringAfter(':')))
-        }
-
-        /** Add several full coordinates at once. */
-        fun add(vararg coordinates: String) {
-            coordinates.forEach { add(it) }
+            placements.add(encode(category, c.substringBefore(':'), c.substringAfter(':'), named.trim()))
         }
 
         /** Sugar for one set: `prefix("mdi") { add("home") }`. */
@@ -69,28 +68,32 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
         private val prefix: String,
         private val placements: SetProperty<String>,
     ) {
-        /** Add an icon name within the enclosing prefix. */
-        fun add(name: String) {
-            placements.add(encode(category, prefix, name.trim()))
-        }
-
-        /** Add several icon names within the enclosing prefix. */
-        fun add(vararg names: String) {
-            names.forEach { add(it) }
+        /** Add an icon name within the enclosing prefix; [named] overrides the accessor name. */
+        @JvmOverloads
+        fun add(name: String, named: String = "") {
+            placements.add(encode(category, prefix, name.trim(), named.trim()))
         }
     }
+
+    /** A decoded placement: where an icon goes and what to call its accessor. */
+    data class Placement(
+        val category: String,
+        val prefix: String,
+        val name: String,
+        val display: String,
+    )
 
     companion object {
         private const val SEP = ""
 
         /** Encode a placement into a single Gradle-input-friendly string. */
-        fun encode(category: String, prefix: String, name: String): String =
-            "$category$SEP$prefix$SEP$name"
+        fun encode(category: String, prefix: String, name: String, display: String): String =
+            listOf(category, prefix, name, display).joinToString(SEP)
 
-        /** Decode a placement into (category, prefix, name). */
-        fun decode(spec: String): Triple<String, String, String> {
-            val parts = spec.split(SEP)
-            return Triple(parts[0], parts.getOrElse(1) { "" }, parts.getOrElse(2) { "" })
+        /** Decode a placement string. */
+        fun decode(spec: String): Placement {
+            val p = spec.split(SEP)
+            return Placement(p[0], p.getOrElse(1) { "" }, p.getOrElse(2) { "" }, p.getOrElse(3) { "" })
         }
 
         /** Validate and canonicalize a `"prefix:name"` coordinate. */

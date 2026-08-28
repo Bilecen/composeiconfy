@@ -55,7 +55,7 @@ abstract class IconfyFetchTask : DefaultTask() {
         // Fetching is category-agnostic: reduce placements to unique (prefix, name), grouped by set.
         val byPrefix = placementList
             .map { IconfyExtension.decode(it) }
-            .map { it.second to it.third }
+            .map { it.prefix to it.name }
             .distinct()
             .sortedWith(compareBy({ it.first }, { it.second }))
             .groupBy(keySelector = { it.first }, valueTransform = { it.second })

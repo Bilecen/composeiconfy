@@ -15,6 +15,8 @@ internal data class IconEntry(
     val category: String,
     val prefix: String,
     val name: String,
+    /** Optional accessor-name override; when blank the accessor is derived from [name]. */
+    val display: String,
     val image: VectorImage,
 )
 
@@ -66,8 +68,8 @@ internal object IconfyCodegen {
             val prefixName = Names.pascal(prefix)
             val prefixObj = TypeSpec.objectBuilder(prefixName)
             val used = mutableSetOf<String>()
-            for (entry in group.sortedBy { it.name }) {
-                val propName = uniquify(Names.pascal(entry.name), used)
+            for (entry in group.sortedBy { it.display.ifEmpty { it.name } }) {
+                val propName = uniquify(Names.pascal(entry.display.ifEmpty { entry.name }), used)
                 addIcon(prefixObj, "$fqParent.$prefixName.$propName", propName, entry.image)
             }
             parent.addType(prefixObj.build())
