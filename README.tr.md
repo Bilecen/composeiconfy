@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.1"
+    id("io.github.bilecen.iconfy") version "0.2.2"
 }
 
 iconfy {
@@ -100,6 +100,17 @@ iconfy {
 
 Aynı ikon hem üst seviyede hem de istediğin kadar kategoride görünebilir (yalnızca bir kez indirilir).
 `Iconfy.Dashboard.` yazdığın anda IDE otomatik tamamlaması tüm ağacı gösterir.
+
+### Özel erişimci adı
+
+Üretilen erişimci adını değiştirmek için `named` ver (uzun/kullanışsız ikon adları için pratik):
+
+```kotlin
+icons {
+    add("lucide:chart-bar", named = "Chart")   // → Iconfy.Lucide.Chart
+    prefix("mdi") { add("home", named = "Main") }  // → Iconfy.Mdi.Main
+}
+```
 
 ### Renklendirme (tint)
 

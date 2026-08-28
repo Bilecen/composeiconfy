@@ -19,7 +19,7 @@ class IconfyCodegenTest {
         IconfyCodegen.generate(
             packageName = "com.test.icons",
             accessorName = "Iconfy",
-            icons = listOf(IconEntry("", "mdi", "home", image)),
+            icons = listOf(IconEntry("", "mdi", "home", "", image)),
             outDir = out,
         )
 
@@ -40,8 +40,8 @@ class IconfyCodegenTest {
             packageName = "com.test.icons",
             accessorName = "Iconfy",
             icons = listOf(
-                IconEntry("", "mdi", "home", image),
-                IconEntry("", "tabler", "home", image),
+                IconEntry("", "mdi", "home", "", image),
+                IconEntry("", "tabler", "home", "", image),
             ),
             outDir = out,
         )
@@ -49,6 +49,24 @@ class IconfyCodegenTest {
         val src = File(out, "com/test/icons/Iconfy.kt").readText()
         assertTrue(src.contains("object Mdi"))
         assertTrue(src.contains("object Tabler"))
+    }
+
+    @Test
+    fun `named overrides the accessor name`(@TempDir tmp: Path) {
+        val out = tmp.toFile()
+        val image = VectorImage(24f, 24f, 24f, 24f, listOf(filledPath(0xFF000000L)))
+
+        IconfyCodegen.generate(
+            packageName = "com.test.icons",
+            accessorName = "Iconfy",
+            icons = listOf(IconEntry("", "lucide", "chart-bar", "Chart", image)),
+            outDir = out,
+        )
+
+        val src = File(out, "com/test/icons/Iconfy.kt").readText()
+        assertTrue(src.contains("val Chart: ImageVector"), src)       // custom accessor name
+        assertTrue(src.contains("addPathNodes"), src)
+        assertTrue(!src.contains("val ChartBar"), src)                // default name not used
     }
 
     @Test
@@ -60,9 +78,9 @@ class IconfyCodegenTest {
             packageName = "com.test.icons",
             accessorName = "Iconfy",
             icons = listOf(
-                IconEntry("", "mdi", "home", image),               // Iconfy.Mdi.Home
-                IconEntry("Dashboard", "mdi", "home", image),      // Iconfy.Dashboard.Mdi.Home
-                IconEntry("Dashboard", "tabler", "settings", image), // Iconfy.Dashboard.Tabler.Settings
+                IconEntry("", "mdi", "home", "", image),               // Iconfy.Mdi.Home
+                IconEntry("Dashboard", "mdi", "home", "", image),      // Iconfy.Dashboard.Mdi.Home
+                IconEntry("Dashboard", "tabler", "settings", "", image), // Iconfy.Dashboard.Tabler.Settings
             ),
             outDir = out,
         )

@@ -55,7 +55,7 @@ iconfy {
     }
     // Semantic cluster mixing sets → Iconfy.Dashboard.Mdi.Home, Iconfy.Dashboard.Tabler.Settings
     category("Dashboard") {
-        prefix("mdi") { add("home") }
+        prefix("mdi") { add("home", named = "Main") }   // custom name → Iconfy.Dashboard.Mdi.Main
         add("tabler:settings")
     }
 }

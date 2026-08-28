@@ -34,7 +34,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.1"
+    id("io.github.bilecen.iconfy") version "0.2.2"
 }
 
 iconfy {
@@ -100,6 +100,17 @@ iconfy {
 
 The same icon can appear both top-level and in any number of categories (it is downloaded once). IDE
 autocomplete surfaces the whole tree as soon as you type `Iconfy.Dashboard.`.
+
+### Custom accessor names
+
+Pass `named` to rename the generated accessor (handy for long or awkward icon names):
+
+```kotlin
+icons {
+    add("lucide:chart-bar", named = "Chart")   // → Iconfy.Lucide.Chart
+    prefix("mdi") { add("home", named = "Main") }  // → Iconfy.Mdi.Main
+}
+```
 
 ### Tinting
 
