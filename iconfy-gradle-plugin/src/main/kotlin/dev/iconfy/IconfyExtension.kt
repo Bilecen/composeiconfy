@@ -47,13 +47,16 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     /** Scope for [icons] / [category]; the same API, optionally tagged with a category. */
     class IconScope(private val category: String, private val placements: SetProperty<String>) {
         /**
-         * Add a full `"prefix:name"` coordinate. Pass [named] to override the generated accessor
-         * name, e.g. `add("lucide:chart-bar", named = "Chart")` → `…Lucide.Chart`.
+         * Add a full `"prefix:name"` coordinate. [named] overrides the accessor name
+         * (`add("lucide:chart-bar", named = "Chart")` → `…Lucide.Chart`); [into] overrides the
+         * middle segment so icons from different sets flatten under one group without repeated
+         * `prefix(...)` blocks (`add("bi:terminal-fill", named = "Logs", into = "Sidebar")` →
+         * `…Sidebar.Logs`).
          */
         @JvmOverloads
-        fun add(coordinate: String, named: String = "") {
+        fun add(coordinate: String, named: String = "", into: String = "") {
             val c = normalize(coordinate)
-            placements.add(encode(category, c.substringBefore(':'), "", c.substringAfter(':'), named.trim()))
+            placements.add(encode(category, c.substringBefore(':'), into.trim(), c.substringAfter(':'), named.trim()))
         }
 
         /**

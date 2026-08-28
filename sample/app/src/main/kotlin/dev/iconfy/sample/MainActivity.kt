@@ -49,6 +49,10 @@ private fun IconGallery() {
         Text("category(\"Dashboard\")", style = MaterialTheme.typography.titleSmall)
         IconRow("Dashboard.Nav.Main (renamed prefix + icon)", Iconfy.Dashboard.Nav.Main)
         IconRow("Dashboard.Tabler.Settings", Iconfy.Dashboard.Tabler.Settings)
+        Text("into = \"Cards\"  (3 sets, flat)", style = MaterialTheme.typography.titleSmall)
+        IconRow("Cards.Gpu (hugeicons)", Iconfy.Cards.Gpu)
+        IconRow("Cards.Disk (clarity)", Iconfy.Cards.Disk)
+        IconRow("Cards.OsType (iconoir)", Iconfy.Cards.OsType)
     }
 }
 

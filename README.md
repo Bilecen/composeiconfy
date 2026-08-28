@@ -34,7 +34,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.3"
+    id("io.github.bilecen.iconfy") version "0.2.4"
 }
 
 iconfy {
@@ -108,6 +108,18 @@ a semantic category:
 category("Dashboard") {
     prefix("mdi", named = "Nav") { add("home") }   // → Iconfy.Dashboard.Nav.Home
 }
+```
+
+To pull icons from **different sets into one group** without repeating `prefix(...)` blocks, set the
+middle group per-icon with `into` (the set comes from the coordinate):
+
+```kotlin
+icons {
+    add("hugeicons:gpu",              named = "Gpu",    into = "Cards")
+    add("clarity:hard-disk-line",     named = "Disk",   into = "Cards")
+    add("iconoir:multi-mac-os-window", named = "OsType", into = "Cards")
+}
+// → Iconfy.Cards.Gpu, Iconfy.Cards.Disk, Iconfy.Cards.OsType
 ```
 
 ### Custom accessor names

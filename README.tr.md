@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.3"
+    id("io.github.bilecen.iconfy") version "0.2.4"
 }
 
 iconfy {
@@ -108,6 +108,18 @@ ile yeniden adlandır:
 category("Dashboard") {
     prefix("mdi", named = "Nav") { add("home") }   // → Iconfy.Dashboard.Nav.Home
 }
+```
+
+**Farklı setlerden** ikonları tek bir grupta toplamak için `prefix(...)` bloklarını tekrarlamadan, orta
+grubu her ikon için `into` ile ver (set koordinattan gelir):
+
+```kotlin
+icons {
+    add("hugeicons:gpu",              named = "Gpu",    into = "Cards")
+    add("clarity:hard-disk-line",     named = "Disk",   into = "Cards")
+    add("iconoir:multi-mac-os-window", named = "OsType", into = "Cards")
+}
+// → Iconfy.Cards.Gpu, Iconfy.Cards.Disk, Iconfy.Cards.OsType
 ```
 
 ### Özel erişimci adı
