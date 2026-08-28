@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.2"
+    id("io.github.bilecen.iconfy") version "0.2.3"
 }
 
 iconfy {
@@ -100,6 +100,15 @@ iconfy {
 
 Aynı ikon hem üst seviyede hem de istediğin kadar kategoride görünebilir (yalnızca bir kez indirilir).
 `Iconfy.Dashboard.` yazdığın anda IDE otomatik tamamlaması tüm ağacı gösterir.
+
+Semantik kategori içinde `Mdi` tuhaf duruyorsa ortadaki prefix segmentini `prefix("mdi", named = "Nav")`
+ile yeniden adlandır:
+
+```kotlin
+category("Dashboard") {
+    prefix("mdi", named = "Nav") { add("home") }   // → Iconfy.Dashboard.Nav.Home
+}
+```
 
 ### Özel erişimci adı
 

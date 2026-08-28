@@ -19,7 +19,7 @@ class IconfyCodegenTest {
         IconfyCodegen.generate(
             packageName = "com.test.icons",
             accessorName = "Iconfy",
-            icons = listOf(IconEntry("", "mdi", "home", "", image)),
+            icons = listOf(IconEntry("", "mdi", "", "home", "", image)),
             outDir = out,
         )
 
@@ -40,8 +40,8 @@ class IconfyCodegenTest {
             packageName = "com.test.icons",
             accessorName = "Iconfy",
             icons = listOf(
-                IconEntry("", "mdi", "home", "", image),
-                IconEntry("", "tabler", "home", "", image),
+                IconEntry("", "mdi", "", "home", "", image),
+                IconEntry("", "tabler", "", "home", "", image),
             ),
             outDir = out,
         )
@@ -59,7 +59,7 @@ class IconfyCodegenTest {
         IconfyCodegen.generate(
             packageName = "com.test.icons",
             accessorName = "Iconfy",
-            icons = listOf(IconEntry("", "lucide", "chart-bar", "Chart", image)),
+            icons = listOf(IconEntry("", "lucide", "", "chart-bar", "Chart", image)),
             outDir = out,
         )
 
@@ -78,9 +78,9 @@ class IconfyCodegenTest {
             packageName = "com.test.icons",
             accessorName = "Iconfy",
             icons = listOf(
-                IconEntry("", "mdi", "home", "", image),               // Iconfy.Mdi.Home
-                IconEntry("Dashboard", "mdi", "home", "", image),      // Iconfy.Dashboard.Mdi.Home
-                IconEntry("Dashboard", "tabler", "settings", "", image), // Iconfy.Dashboard.Tabler.Settings
+                IconEntry("", "mdi", "", "home", "", image),               // Iconfy.Mdi.Home
+                IconEntry("Dashboard", "mdi", "", "home", "", image),      // Iconfy.Dashboard.Mdi.Home
+                IconEntry("Dashboard", "tabler", "", "settings", "", image), // Iconfy.Dashboard.Tabler.Settings
             ),
             outDir = out,
         )
@@ -92,5 +92,22 @@ class IconfyCodegenTest {
         assertTrue(src.contains("Iconfy.Dashboard.Tabler.Settings"), src)
         // Top-level accessor still present alongside the categorized one.
         assertTrue(src.contains("Iconfy.Mdi.Home"), src)
+    }
+
+    @Test
+    fun `prefix display renames the middle segment`(@TempDir tmp: Path) {
+        val out = tmp.toFile()
+        val image = VectorImage(24f, 24f, 24f, 24f, listOf(filledPath(0xFF000000L)))
+
+        IconfyCodegen.generate(
+            packageName = "com.test.icons",
+            accessorName = "Iconfy",
+            icons = listOf(IconEntry("Dashboard", "mdi", "Nav", "home", "", image)),
+            outDir = out,
+        )
+
+        val src = File(out, "com/test/icons/Iconfy.kt").readText()
+        assertTrue(src.contains("Iconfy.Dashboard.Nav.Home"), src)   // renamed middle
+        assertTrue(!src.contains("object Mdi"), src)                 // default Mdi not used
     }
 }

@@ -70,7 +70,9 @@ abstract class IconfyGenerateTask : DefaultTask() {
         // Expand placements into accessors: the same icon may appear top-level and in categories.
         val entries = placements.get().sorted().mapNotNull { spec ->
             val p = IconfyExtension.decode(spec)
-            images["${p.prefix}/${p.name}"]?.let { IconEntry(p.category, p.prefix, p.name, p.display, it) }
+            images["${p.prefix}/${p.name}"]?.let {
+                IconEntry(p.category, p.prefix, p.prefixDisplay, p.name, p.display, it)
+            }
         }
 
         if (entries.isEmpty()) {

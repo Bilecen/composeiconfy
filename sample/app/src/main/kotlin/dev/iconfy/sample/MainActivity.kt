@@ -47,7 +47,7 @@ private fun IconGallery() {
         IconRow("material-symbols:settings", Iconfy.MaterialSymbols.Settings)
         IconRow("ph:gear-six-fill", Iconfy.Ph.GearSixFill)
         Text("category(\"Dashboard\")", style = MaterialTheme.typography.titleSmall)
-        IconRow("Dashboard.Mdi.Main (named)", Iconfy.Dashboard.Mdi.Main)
+        IconRow("Dashboard.Nav.Main (renamed prefix + icon)", Iconfy.Dashboard.Nav.Main)
         IconRow("Dashboard.Tabler.Settings", Iconfy.Dashboard.Tabler.Settings)
     }
 }

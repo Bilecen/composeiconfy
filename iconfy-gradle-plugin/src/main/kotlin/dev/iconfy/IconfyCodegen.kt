@@ -14,6 +14,8 @@ import java.io.File
 internal data class IconEntry(
     val category: String,
     val prefix: String,
+    /** Optional override for the prefix segment's object name (blank = derive from [prefix]). */
+    val prefixDisplay: String,
     val name: String,
     /** Optional accessor-name override; when blank the accessor is derived from [name]. */
     val display: String,
@@ -62,10 +64,10 @@ internal object IconfyCodegen {
             .writeTo(outDir)
     }
 
-    /** Adds one nested object per prefix (each holding the icon accessors) under [parent]. */
+    /** Adds one nested object per prefix segment (each holding the icon accessors) under [parent]. */
     private fun addPrefixObjects(parent: TypeSpec.Builder, fqParent: String, entries: List<IconEntry>) {
-        for ((prefix, group) in entries.groupBy { it.prefix }.toSortedMap()) {
-            val prefixName = Names.pascal(prefix)
+        val byPrefixName = entries.groupBy { Names.pascal(it.prefixDisplay.ifEmpty { it.prefix }) }.toSortedMap()
+        for ((prefixName, group) in byPrefixName) {
             val prefixObj = TypeSpec.objectBuilder(prefixName)
             val used = mutableSetOf<String>()
             for (entry in group.sortedBy { it.display.ifEmpty { it.name } }) {

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.bilecen"
-version = "0.2.2"
+version = "0.2.3"
 
 repositories {
     google()

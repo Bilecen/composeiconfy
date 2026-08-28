@@ -53,12 +53,15 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
         @JvmOverloads
         fun add(coordinate: String, named: String = "") {
             val c = normalize(coordinate)
-            placements.add(encode(category, c.substringBefore(':'), c.substringAfter(':'), named.trim()))
+            placements.add(encode(category, c.substringBefore(':'), "", c.substringAfter(':'), named.trim()))
         }
 
-        /** Sugar for one set: `prefix("mdi") { add("home") }`. */
-        fun prefix(prefix: String, action: Action<PrefixScope>) {
-            action.execute(PrefixScope(category, prefix.trim(), placements))
+        /**
+         * Sugar for one set: `prefix("mdi") { add("home") }`. Pass [named] to rename the prefix
+         * segment, e.g. `prefix("mdi", named = "Nav")` → `…Dashboard.Nav.Home`.
+         */
+        fun prefix(prefix: String, named: String = "", action: Action<PrefixScope>) {
+            action.execute(PrefixScope(category, prefix.trim(), named.trim(), placements))
         }
     }
 
@@ -66,12 +69,13 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     class PrefixScope(
         private val category: String,
         private val prefix: String,
+        private val prefixDisplay: String,
         private val placements: SetProperty<String>,
     ) {
         /** Add an icon name within the enclosing prefix; [named] overrides the accessor name. */
         @JvmOverloads
         fun add(name: String, named: String = "") {
-            placements.add(encode(category, prefix, name.trim(), named.trim()))
+            placements.add(encode(category, prefix, prefixDisplay, name.trim(), named.trim()))
         }
     }
 
@@ -79,6 +83,8 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     data class Placement(
         val category: String,
         val prefix: String,
+        /** Optional override for the prefix segment's object name (blank = derive from [prefix]). */
+        val prefixDisplay: String,
         val name: String,
         val display: String,
     )
@@ -87,13 +93,24 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
         private const val SEP = ""
 
         /** Encode a placement into a single Gradle-input-friendly string. */
-        fun encode(category: String, prefix: String, name: String, display: String): String =
-            listOf(category, prefix, name, display).joinToString(SEP)
+        fun encode(
+            category: String,
+            prefix: String,
+            prefixDisplay: String,
+            name: String,
+            display: String,
+        ): String = listOf(category, prefix, prefixDisplay, name, display).joinToString(SEP)
 
         /** Decode a placement string. */
         fun decode(spec: String): Placement {
             val p = spec.split(SEP)
-            return Placement(p[0], p.getOrElse(1) { "" }, p.getOrElse(2) { "" }, p.getOrElse(3) { "" })
+            return Placement(
+                p[0],
+                p.getOrElse(1) { "" },
+                p.getOrElse(2) { "" },
+                p.getOrElse(3) { "" },
+                p.getOrElse(4) { "" },
+            )
         }
 
         /** Validate and canonicalize a `"prefix:name"` coordinate. */
