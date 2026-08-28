@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.5] - 2026-08-28
+
+### Fixed
+- `into` now works **inside `prefix(...)` blocks** too, so one `prefix("hugeicons") { … }` can route
+  its icons to different groups: `add("gpu", named = "Gpu", into = "Dashboard")`. Previously this fell
+  through to the top-level `add` and failed with "icon coordinate must be 'prefix:name'".
+
 ## [0.2.4] - 2026-08-28
 
 ### Added
