@@ -31,6 +31,7 @@ internal fun wireAndroid(
             cacheDir.set(cacheLocation)
             packageName.set(ext.packageName)
             accessorName.set(ext.accessorName)
+            rootDir.set(project.rootProject.layout.projectDirectory)
         }
 
         // Register the generated dir as a variant Java source: AGP wires the generate→compile task

@@ -1,5 +1,9 @@
 # Iconfy
 
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.bilecen.iconfy)](https://plugins.gradle.org/plugin/io.github.bilecen.iconfy)
+[![CI](https://github.com/Bilecen/composeiconfy/actions/workflows/ci.yml/badge.svg)](https://github.com/Bilecen/composeiconfy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 [🇬🇧 English](README.md) · **🇹🇷 Türkçe**
 
 [Iconify](https://iconify.design)'ın 200.000+ ikonundan (Material Design Icons, Tabler, Lucide,

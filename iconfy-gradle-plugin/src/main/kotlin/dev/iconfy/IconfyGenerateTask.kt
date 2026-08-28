@@ -6,6 +6,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -30,6 +31,10 @@ abstract class IconfyGenerateTask : DefaultTask() {
 
     @get:OutputDirectory
     abstract val generatedSrcDir: DirectoryProperty
+
+    /** Root dir for pretty log paths; not an input (Internal) so it doesn't affect up-to-date checks. */
+    @get:Internal
+    abstract val rootDir: DirectoryProperty
 
     @TaskAction
     fun run() {
@@ -65,6 +70,7 @@ abstract class IconfyGenerateTask : DefaultTask() {
         if (failed.isNotEmpty()) {
             logger.warn("iconfy: ${failed.size} icon(s) skipped (unrepresentable): ${failed.joinToString()}")
         }
-        logger.lifecycle("iconfy: generated ${entries.size} ${accessorName.get()} accessor(s) into ${out.relativeTo(project.rootDir)}")
+        val where = rootDir.orNull?.asFile?.let { runCatching { out.relativeTo(it) }.getOrDefault(out) } ?: out
+        logger.lifecycle("iconfy: generated ${entries.size} ${accessorName.get()} accessor(s) into $where")
     }
 }
