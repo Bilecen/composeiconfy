@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.4"
+    id("io.github.bilecen.iconfy") version "0.2.5"
 }
 
 iconfy {
@@ -120,6 +120,15 @@ icons {
     add("iconoir:multi-mac-os-window", named = "OsType", into = "Cards")
 }
 // → Iconfy.Cards.Gpu, Iconfy.Cards.Disk, Iconfy.Cards.OsType
+```
+
+`into` bir **`prefix(...)` bloğunun içinde de** çalışır — set'i bir kez sabitle, her ikonu grubuna yönlendir:
+
+```kotlin
+prefix("hugeicons") {
+    add("dashboard-square-02", named = "Dashboard", into = "Sidebar")   // → Iconfy.Sidebar.Dashboard
+    add("gpu",                 named = "Gpu",       into = "Hardware")  // → Iconfy.Hardware.Gpu
+}
 ```
 
 ### Özel erişimci adı

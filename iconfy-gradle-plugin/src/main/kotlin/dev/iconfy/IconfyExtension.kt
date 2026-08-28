@@ -75,10 +75,15 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
         private val prefixDisplay: String,
         private val placements: SetProperty<String>,
     ) {
-        /** Add an icon name within the enclosing prefix; [named] overrides the accessor name. */
+        /**
+         * Add an icon name within the enclosing prefix. [named] overrides the accessor name; [into]
+         * routes this icon to a different middle group (overriding the block's own segment), so one
+         * `prefix("hugeicons") { … }` block can spread its icons across `Sidebar`, `Dashboard`, …
+         */
         @JvmOverloads
-        fun add(name: String, named: String = "") {
-            placements.add(encode(category, prefix, prefixDisplay, name.trim(), named.trim()))
+        fun add(name: String, named: String = "", into: String = "") {
+            val display = into.trim().ifEmpty { prefixDisplay }
+            placements.add(encode(category, prefix, display, name.trim(), named.trim()))
         }
     }
 
