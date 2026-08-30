@@ -7,6 +7,11 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
+/** Best-effort feature toggle: some parsers don't support every feature and throw — ignore those. */
+private fun DocumentBuilderFactory.setFeatureQuietly(name: String, value: Boolean) {
+    runCatching { setFeature(name, value) }
+}
+
 /** Parsed vector image: viewport + default size + a tree of paths/groups. */
 internal data class VectorImage(
     val defaultWidth: Float,
@@ -74,10 +79,17 @@ internal object SvgToImageVector {
     }
 
     private fun parseVectorDrawable(xml: String): VectorImage {
-        val doc = DocumentBuilderFactory.newInstance()
-            .apply { isNamespaceAware = false }
-            .newDocumentBuilder()
-            .parse(xml.byteInputStream())
+        val factory = DocumentBuilderFactory.newInstance().apply {
+            isNamespaceAware = false
+            // Harden against XXE and entity-expansion ("billion laughs") in the parsed XML.
+            setFeatureQuietly("http://apache.org/xml/features/disallow-doctype-decl", true)
+            setFeatureQuietly("http://xml.org/sax/features/external-general-entities", false)
+            setFeatureQuietly("http://xml.org/sax/features/external-parameter-entities", false)
+            setFeatureQuietly("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+            isXIncludeAware = false
+            isExpandEntityReferences = false
+        }
+        val doc = factory.newDocumentBuilder().parse(xml.byteInputStream())
         val root = doc.documentElement // <vector>
         val vpW = root.attrFloat("android:viewportWidth") ?: 24f
         val vpH = root.attrFloat("android:viewportHeight") ?: 24f
