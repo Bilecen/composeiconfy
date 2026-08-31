@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>io.github.bilecen.iconfy</id>
+    <name>Iconfy — Iconify Icons</name>
+    <vendor url="https://github.com/Bilecen/composeiconfy">Bilecen</vendor>
+
+    <description><![CDATA[
+        Browse the full <a href="https://iconify.design">Iconify</a> catalog inside the IDE and insert
+        icons into the <code>iconfy { }</code> Gradle DSL of the
+        <a href="https://plugins.gradle.org/plugin/io.github.bilecen.iconfy">iconfy</a> plugin —
+        search, preview, click to add, plus autocomplete for <code>add("prefix:name")</code>.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+            id="Iconfy"
+            anchor="right"
+            factoryClass="dev.iconfy.idea.toolwindow.IconfyToolWindowFactory" />
+    </extensions>
+</idea-plugin>

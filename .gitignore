@@ -13,6 +13,9 @@ captures/
 # Kotlin
 .kotlin/
 
+# IntelliJ Platform Gradle plugin working dir
+.intellijPlatform/
+
 # NOTE: .iconfy/cache/ is intentionally NOT ignored — commit it for reproducible,
 # network-free (--offline) builds on CI. Remove the line below only if you prefer
 # to re-download icons on every fresh checkout.
