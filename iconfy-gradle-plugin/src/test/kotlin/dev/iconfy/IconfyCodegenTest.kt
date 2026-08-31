@@ -1,5 +1,6 @@
 package dev.iconfy
 
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -10,6 +11,32 @@ class IconfyCodegenTest {
 
     private fun filledPath(color: Long) =
         VPath("M0,0h24v24h-24z", color, 1f, null, 1f, 0f, "butt", "miter", 4f, "nonZero")
+
+    @Test
+    fun `category colliding with a top-level group fails fast (H1)`(@TempDir tmp: Path) {
+        val image = VectorImage(24f, 24f, 24f, 24f, listOf(filledPath(0xFF000000L)))
+        val ex = assertThrows(IllegalStateException::class.java) {
+            IconfyCodegen.generate(
+                "com.test.icons", "Iconfy",
+                listOf(
+                    IconEntry("", "mdi", "Nav", "home", "", image),      // top-level object Nav
+                    IconEntry("Nav", "mdi", "", "settings", "", image),  // category Nav → collision
+                ),
+                tmp.toFile(),
+            )
+        }
+        assertTrue(ex.message!!.contains("collision"), ex.message)
+    }
+
+    @Test
+    fun `path-unsafe set prefix or icon name is rejected (M2)`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            IconfyExtension.encode("", "mdi", "", "../../etc/passwd", "")
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            IconfyExtension.encode("", "../evil", "", "home", "")
+        }
+    }
 
     @Test
     fun `generates nested objects with lazy accessors`(@TempDir tmp: Path) {

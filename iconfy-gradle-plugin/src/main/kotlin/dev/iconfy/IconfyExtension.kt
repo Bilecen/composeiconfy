@@ -100,6 +100,9 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
     companion object {
         private const val SEP = ""
 
+        /** Set prefixes and icon names reach the filesystem as cache paths, so keep them path-safe. */
+        private val SAFE_PART = Regex("^[A-Za-z0-9_-]+$")
+
         /** Encode a placement into a single Gradle-input-friendly string. */
         fun encode(
             category: String,
@@ -107,7 +110,18 @@ abstract class IconfyExtension @Inject constructor(objects: ObjectFactory) {
             prefixDisplay: String,
             name: String,
             display: String,
-        ): String = listOf(category, prefix, prefixDisplay, name, display).joinToString(SEP)
+        ): String {
+            requireSafe(prefix)
+            requireSafe(name)
+            return listOf(category, prefix, prefixDisplay, name, display).joinToString(SEP)
+        }
+
+        private fun requireSafe(part: String) {
+            require(part.matches(SAFE_PART)) {
+                "iconfy: invalid icon set prefix or name '$part' — only letters, digits, '-' and '_' " +
+                    "are allowed (Iconify names never contain '/', '\\' or '..')."
+            }
+        }
 
         /** Decode a placement string. */
         fun decode(spec: String): Placement {

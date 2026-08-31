@@ -12,6 +12,7 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
+import java.time.Duration
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
@@ -52,6 +53,13 @@ abstract class IconfyFetchTask : DefaultTask() {
         val isOffline = offline.get()
         val missing = mutableListOf<String>()
 
+        if (!isOffline && !base.startsWith("https://", ignoreCase = true)) {
+            logger.warn("iconfy: apiUrl '$base' is not HTTPS — icon data will be fetched over cleartext.")
+        }
+
+        // One client, with timeouts, so a stalled server fails the task instead of hanging the build.
+        val client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build()
+
         // Fetching is category-agnostic: reduce placements to unique (prefix, name), grouped by set.
         val byPrefix = placementList
             .map { IconfyExtension.decode(it) }
@@ -70,7 +78,7 @@ abstract class IconfyFetchTask : DefaultTask() {
                 missing += needed.map { "$prefix:$it" }
                 continue
             }
-            fetchPrefix(base, prefix, needed, outRoot, missing)
+            fetchPrefix(client, base, prefix, needed, outRoot, missing)
         }
 
         if (missing.isNotEmpty()) {
@@ -81,6 +89,7 @@ abstract class IconfyFetchTask : DefaultTask() {
     }
 
     private fun fetchPrefix(
+        client: HttpClient,
         base: String,
         prefix: String,
         names: List<String>,
@@ -90,9 +99,9 @@ abstract class IconfyFetchTask : DefaultTask() {
         val url = "$base/$prefix.json?icons=${names.joinToString(",")}"
         logger.lifecycle("iconfy: fetching ${names.size} icon(s) from '$prefix'…")
 
-        val client = HttpClient.newHttpClient()
         val request = HttpRequest.newBuilder(URI.create(url))
             .header("User-Agent", "iconfy-gradle-plugin")
+            .timeout(Duration.ofSeconds(30))
             .GET()
             .build()
 

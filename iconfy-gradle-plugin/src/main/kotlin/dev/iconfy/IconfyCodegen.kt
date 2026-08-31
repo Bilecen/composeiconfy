@@ -46,6 +46,20 @@ internal object IconfyCodegen {
         val root = TypeSpec.objectBuilder(accessorName)
         val byCategory = icons.groupBy { it.category }
 
+        // Guard against name collisions that would emit two sibling `object`s under the root and
+        // fail to compile in the consumer: a category vs. a top-level prefix/`into` group with the
+        // same name, or two categories that map to the same identifier.
+        val topLevelGroupNames = (byCategory[""] ?: emptyList())
+            .map { Names.pascal(it.prefixDisplay.ifEmpty { it.prefix }) }.toSet()
+        val categoryNames = byCategory.keys.filter { it.isNotEmpty() }.map { Names.pascal(it) }
+        val collisions = categoryNames.groupingBy { it }.eachCount().filterValues { it > 1 }.keys +
+            categoryNames.toSet().intersect(topLevelGroupNames)
+        check(collisions.isEmpty()) {
+            "iconfy: name collision on ${collisions.joinToString()} — a category and a top-level " +
+                "group (or two categories) map to the same object name. Rename one via category(\"…\") " +
+                "or into = \"…\"."
+        }
+
         // Uncategorized icons: prefix objects directly under the root (Iconfy.Mdi.Home).
         byCategory[""]?.let { addPrefixObjects(root, accessorName, it) }
 

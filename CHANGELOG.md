@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.6] - 2026-08-30
+
+### Security & hardening
+- **Fail fast on name collisions** instead of emitting non-compiling code: a `category("X")` that
+  clashes with a top-level `into`/prefix group `X` (or two categories mapping to the same name) now
+  throws a clear error naming the conflict.
+- **HTTP timeouts** (15s connect / 30s per request) on a single shared client, so a stalled `apiUrl`
+  can no longer hang the build.
+- **XXE / entity-expansion hardening** on the XML parser (disallow DOCTYPE, disable external entities).
+- **Path-traversal guard**: set prefixes and icon names are restricted to `[A-Za-z0-9_-]` so a crafted
+  coordinate can't write cache files outside `.iconfy/cache`.
+- **Warn on non-HTTPS `apiUrl`** (cleartext icon data).
+
 ## [0.2.5] - 2026-08-28
 
 ### Fixed
