@@ -34,7 +34,7 @@ Plugin'i uygulama modülünde uygula ve ikonları bildir:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.6"
+    id("io.github.bilecen.iconfy") version "0.3.0"
 }
 
 iconfy {
@@ -65,6 +65,28 @@ pluginManagement {
 ```
 
 Üretilen kod yalnızca `androidx.compose.ui`'ye bağlıdır — Compose uygulamanda zaten var.
+
+### Compose Multiplatform
+
+Aynı plugin'i bir Kotlin Multiplatform modülünde uygula; iconfy `commonMain`'e üretir, böylece
+`Iconfy.*` erişimcileri **Android, iOS, Desktop ve Web**'de paylaşılır — hedefe özel kod yok:
+
+```kotlin
+// shared/build.gradle.kts
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("io.github.bilecen.iconfy") version "0.3.0"
+}
+iconfy {
+    packageName.set("com.example.icons")
+    icons { add("mdi:home") }
+}
+// commonMain: Iconfy.Mdi.Home her hedefte çalışır.
+```
+
+Additive'dir: sadece-Android projeleri değişmez; KMP projesinde Android variant wiring atlanır, iki kez üretilmez.
 
 ## Kullanım
 
