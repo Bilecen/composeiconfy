@@ -34,7 +34,7 @@ Apply the plugin in your app module and declare icons:
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("io.github.bilecen.iconfy") version "0.2.6"
+    id("io.github.bilecen.iconfy") version "0.3.0"
 }
 
 iconfy {
@@ -65,6 +65,29 @@ pluginManagement {
 ```
 
 Generated code depends only on `androidx.compose.ui`, which your Compose app already has.
+
+### Compose Multiplatform
+
+Apply the same plugin in a Kotlin Multiplatform module and iconfy generates into `commonMain`, so the
+`Iconfy.*` accessors are shared across **Android, iOS, Desktop and Web** — no per-target code:
+
+```kotlin
+// shared/build.gradle.kts
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("io.github.bilecen.iconfy") version "0.3.0"
+}
+iconfy {
+    packageName.set("com.example.icons")
+    icons { add("mdi:home") }
+}
+// commonMain: Iconfy.Mdi.Home works on every target.
+```
+
+It's additive: Android-only projects are unchanged, and in a KMP project the Android variant wiring is
+skipped so nothing generates twice.
 
 ## Usage
 

@@ -3,6 +3,17 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-08-31
+
+### Added
+- **Compose Multiplatform support.** Applied in a Kotlin Multiplatform project, iconfy generates a
+  single `iconfyGenerate` task into the `commonMain` source set, so `Iconfy.*` accessors are shared
+  across Android, iOS, Desktop and Web. The generated code depends only on `androidx.compose.ui`,
+  which Compose Multiplatform provides under the same package names — no per-target code. Verified by
+  compiling `commonMain` for Android, Desktop (JVM) and iOS (Kotlin/Native).
+- **Additive & backward compatible:** Android-only projects are unchanged; when the KMP plugin is
+  present the Android variant wiring is skipped so nothing generates twice.
+
 ## [0.2.6] - 2026-08-30
 
 ### Security & hardening

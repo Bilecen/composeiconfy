@@ -28,9 +28,20 @@ class IconfyPlugin : Plugin<Project> {
             cacheDir.set(cacheLocation)
         }
 
-        // Faz 2: generate ImageVector sources and register them with the Android variant.
-        project.pluginManager.withPlugin("com.android.application") { wireAndroid(project, ext, fetch, cacheLocation) }
-        project.pluginManager.withPlugin("com.android.library") { wireAndroid(project, ext, fetch, cacheLocation) }
+        // Kotlin Multiplatform: generate into commonMain (covers all targets, incl. androidTarget).
+        project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+            wireKmp(project, ext, fetch, cacheLocation)
+        }
+
+        // Android-only projects (not KMP): wire the Android variant sources. Guarded so a KMP project
+        // — whose androidTarget also applies the Android plugin — doesn't generate twice.
+        val notKmp = { !project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform") }
+        project.pluginManager.withPlugin("com.android.application") {
+            if (notKmp()) wireAndroid(project, ext, fetch, cacheLocation)
+        }
+        project.pluginManager.withPlugin("com.android.library") {
+            if (notKmp()) wireAndroid(project, ext, fetch, cacheLocation)
+        }
     }
 
     companion object {

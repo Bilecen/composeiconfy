@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.bilecen"
-version = "0.2.6"
+version = "0.3.0"
 
 repositories {
     google()
@@ -18,6 +18,10 @@ dependencies {
     // AGP variant API (AndroidComponentsExtension) for wiring generated sources.
     // compileOnly: we don't force AGP onto non-Android consumers; wiring is guarded by plugins.withId.
     compileOnly("com.android.tools.build:gradle-api:8.7.3")
+
+    // Kotlin Multiplatform DSL (KotlinMultiplatformExtension) for wiring commonMain sources.
+    // compileOnly: only present when the consumer applies the KMP plugin.
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21")
 
     // Minimal JSON parsing for the Iconify API response.
     implementation("com.google.code.gson:gson:2.11.0")
@@ -41,8 +45,8 @@ gradlePlugin {
             id = "io.github.bilecen.iconfy"
             implementationClass = "dev.iconfy.IconfyPlugin"
             displayName = "Iconfy — Iconify icons for Compose"
-            description = "Build-time Iconify → Jetpack Compose ImageVector code generation"
-            tags.set(listOf("android", "compose", "icons", "iconify", "codegen"))
+            description = "Build-time Iconify → Compose ImageVector codegen for Android & Compose Multiplatform"
+            tags.set(listOf("android", "compose", "compose-multiplatform", "kmp", "icons", "iconify", "codegen"))
         }
     }
 }
